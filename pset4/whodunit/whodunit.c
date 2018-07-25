@@ -53,8 +53,6 @@ int main(int argc, char *argv[])
         return 4;
     }
 
-
-
     // write outfile's BITMAPFILEHEADER
     fwrite(&bf, sizeof(BITMAPFILEHEADER), 1, outptr);
 
@@ -75,6 +73,16 @@ int main(int argc, char *argv[])
 
             // read RGB triple from infile
             fread(&triple, sizeof(RGBTRIPLE), 1, inptr);
+
+            // adjust red pixels to reveal message
+            if (triple.rgbtRed == 255 && triple.rgbtGreen == 0 && triple.rgbtBlue == 0)
+            {
+                triple.rgbtRed = 0;
+            }
+            if  (triple.rgbtRed == 255 && triple.rgbtGreen == 255 && triple.rgbtBlue == 255)
+            {
+                triple.rgbtRed = 0, triple.rgbtGreen = 0, triple.rgbtBlue = 0;
+            }
 
             // write RGB triple to outfile
             fwrite(&triple, sizeof(RGBTRIPLE), 1, outptr);
