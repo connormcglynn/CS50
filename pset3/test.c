@@ -17,7 +17,7 @@ FILE *file = fopen(argv[1], "r");
 
 fread(buffer, 512, 1, raw_file);
 
-// for finding the end of the file:
+// for finding the beginning of the file:
 
 if (buffer[0] == 0xff &&
     buffer[1] == 0xd8 &&
