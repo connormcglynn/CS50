@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
             }
 
             // create filename for new image
-            sprintf(filename, "%03d.jpg", counter);;
+            sprintf(filename, "%03d.jpg", counter);
 
             // open new image
             outptr = fopen(filename, "w");
