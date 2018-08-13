@@ -5,9 +5,31 @@
 #include "dictionary.h"
 
 // Returns true if word is in dictionary else false
+
+
+typedef struct node
+{
+    char word[LENGTH + 1];
+    struct node *next;
+}
+node;
+
+node *hashtable[26];
+
 bool check(const char *word)
 {
-    // TODO
+    // TODO (will be case-insensitive)
+    // assume strings with only alphabetical chars and/or apostrophes
+    // if word exists, it should be found in the hash bucket of it's first letter
+        hashtable[hash(word)]
+
+    node *cursor = node;
+    while (cursor != NULL)
+    {
+        // TODO strcasecmp
+        // search in that linked list if it exists
+    }
+    cursor = cursor->next;
     return false;
 }
 
@@ -15,6 +37,22 @@ bool check(const char *word)
 bool load(const char *dictionary)
 {
     // TODO
+    while (fscanf(file, "%s", word) != EOF)
+    {
+        // malloc a node * for each new word
+        node *new_node = malloc(sizeof(node));
+        if (new_node == NULL)
+        {
+            unload();
+            return false;
+        }
+        else
+        {
+            strcpy(new_node->word, word);
+            new_node->next = head;
+            head = new_node;
+        }
+    }
     return false;
 }
 
