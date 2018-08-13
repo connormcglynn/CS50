@@ -4,6 +4,24 @@
 
 // Create an array of linked lists, each by letters A through Z
 
+// CREATE LINKED LIST
+
+typedef struct sllist
+{
+    VALUE val;
+    struct sllist* next;
+}
+sllnode;
+
+sllnode* create(VALUE val);
+sllnode* new = create(6);
+
+// INSERT NEW NODE INTO BEGINNING OF EXISTING LINKED LIST
+
+sllnode* insert(sllnode* head, VALUE val);
+
+// FOR HASH TABLE
+// use internet to search for best hash function, cite your source
 
 // RESOURCES
 
