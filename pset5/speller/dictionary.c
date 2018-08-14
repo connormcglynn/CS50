@@ -1,11 +1,14 @@
 // Implements a dictionary's functionality
 
+#include <stdio.h>
+#include <stdlib.h>
 #include <stdbool.h>
+#include <string.h>
+#include <ctype.h>
 
 #include "dictionary.h"
 
-// Returns true if word is in dictionary else false
-
+#define hashsize 199999
 
 typedef struct node
 {
@@ -14,58 +17,128 @@ typedef struct node
 }
 node;
 
-node *hashtable[26];
+// hashtable[hashsize]
+node *hashtable[hashsize];
 
+// wordcount
+unsigned long wc = 0;
+
+// hash function declaration
+unsigned long hash(char *str);
+
+// Returns true if word is in dictionary else false
 bool check(const char *word)
 {
-    // TODO (will be case-insensitive)
-    // assume strings with only alphabetical chars and/or apostrophes
-    // if word exists, it should be found in the hash bucket of it's first letter
-        hashtable[hash(word)]
+    // TODO (check for case-insensitivity)
+    int length = strlen(word);
+    char n[length + 1];
+    n[length] = '\0';
 
-    node *cursor = node;
+    for (int i = 0; i < length; i++)
+    {
+        n[i] = tolower(word[i]);
+    }
+
+    int index = hash(n) % hashsize;
+    node *cursor = hashtable[index];
+
     while (cursor != NULL)
     {
-        // TODO strcasecmp
-        // search in that linked list if it exists
+        // TODO strcmp
+        // search in that linked list if word exists
+        if (strcmp(n, cursor->word) == 0)
+        {
+            return true;
+        }
+
+        cursor = cursor->next;
     }
-    cursor = cursor->next;
+
     return false;
 }
 
 // Loads dictionary into memory, returning true if successful else false
 bool load(const char *dictionary)
 {
-    // TODO
-    while (fscanf(file, "%s", word) != EOF)
+    // open dictionary
+    FILE *file = fopen(dictionary, "r");
+    if (file == NULL)
     {
+        fclose(file);
+        return false;
+    }
+
+    // reset wordcount
+    wc = 0;
+
+    // set buffer
+    char buffer[LENGTH + 1];
+
+    // TODO
+    while (fscanf(file, "%s", buffer) != EOF)
+    {
+        int length = strlen(buffer);
+        if (buffer[length - 1] == '\n')
+        {
+            buffer[--length] = '\0';
+        }
+
+        unsigned int index = hash(buffer) % hashsize;
+
         // malloc a node * for each new word
         node *new_node = malloc(sizeof(node));
         if (new_node == NULL)
         {
-            unload();
+            fclose(file);
             return false;
         }
-        else
-        {
-            strcpy(new_node->word, word);
-            new_node->next = head;
-            head = new_node;
-        }
+
+        strcpy(new_node->word, buffer);
+        new_node->next = hashtable[index];
+        hashtable[index] = new_node;
+        wc++;
+
     }
-    return false;
+
+    fclose(file);
+    return true;
 }
 
 // Returns number of words in dictionary if loaded else 0 if not yet loaded
 unsigned int size(void)
 {
-    // TODO
-    return 0;
+    return wc;
+}
+
+// Dan Bernstein's djb2 hash function via http://www.cse.yorku.ca/~oz/hash.html
+unsigned long hash(char *str)
+{
+    unsigned long hash = 5381;
+    int c;
+    while ((c = *str++))
+    {
+        hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
+    }
+    return hash;
 }
 
 // Unloads dictionary from memory, returning true if successful else false
 bool unload(void)
 {
     // TODO
-    return false;
+    for (int i = 0; i < hashsize; i++)
+    {
+        node *next = hashtable[i];
+        while (next != NULL)
+        {
+            node *f = next;
+            next = next->next;
+            free(f);
+        }
+    }
+
+
+    wc = 0;
+    return true;
 }
+
